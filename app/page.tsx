@@ -2,10 +2,7 @@ import Banner from './components/Banner/index';
 import Features from './components/Work/index';
 import Cook from './components/Cook/index';
 import Expert from './components/Expert/index';
-import Gallery from './components/Gallery/index';
 import Newsletter from './components/Newsletter/Newsletter';
-
-
 
 export default function Home() {
   return (
@@ -16,11 +13,7 @@ export default function Home() {
         <Cook />
       </div>
       {/* <Expert /> */}
-      <Gallery />
       <Newsletter />
-
-      <h1 style={{padding:'16px'}}>DEPLOY TEST</h1>  {/* ← add this */}
     </main>
   );
 }
-
