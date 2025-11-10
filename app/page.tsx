@@ -14,9 +14,13 @@ export default function Home() {
       <Features />
       <div id="about-section">
         <Cook />
-      </div>      {/* <Expert />
-      <Gallery /> */}
+      </div>
+      {/* <Expert /> */}
+      <Gallery />
       <Newsletter />
+
+      <h1 style={{padding:'16px'}}>DEPLOY TEST</h1>  {/* ← add this */}
     </main>
-  )
+  );
 }
+
