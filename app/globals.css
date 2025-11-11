@@ -6,10 +6,21 @@
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";
 
+/* ===== Global Page Styles ===== */
 html {
   scroll-behavior: smooth !important;
 }
 
+/* Site background + global text style area */
+body {
+  background-color: #EAEAEA;
+  color: #000000; /* optional, ensures good contrast */
+  font-family: 'Gontserrat', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Sticky navbar on scroll */
 html:not([data-scroll="0"]) .navbar {
   position: fixed;
   top: 0;
@@ -22,8 +33,14 @@ html:not([data-scroll="0"]) .navbar {
   z-index: 3;
 }
 
+/* Card background */
 .card-b {
-  background: linear-gradient(180deg, #F8F6F6 0%, #F8F6F6 0.01%, rgba(248, 246, 246, 0) 100%);
+  background: linear-gradient(
+    180deg,
+    #F8F6F6 0%,
+    #F8F6F6 0.01%,
+    rgba(248, 246, 246, 0) 100%
+  );
 }
 
 .ls-51 {
@@ -41,7 +58,7 @@ html:not([data-scroll="0"]) .navbar {
 }
 
 .footer-icons {
-  transition: .5s;
+  transition: 0.5s;
 }
 
 .footer-icons:hover {
@@ -49,11 +66,11 @@ html:not([data-scroll="0"]) .navbar {
 }
 
 .footer-icons:hover > .sepiaa {
-  filter: invert(100.10);
+  filter: invert(100.1);
 }
 
 .space-links {
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .space-links:hover {
@@ -78,7 +95,7 @@ html:not([data-scroll="0"]) .navbar {
   left: 0;
   background-color: #DF6751;
   transform-origin: bottom right;
-  transition: transform .25s ease-out;
+  transition: transform 0.25s ease-out;
 }
 
 .hover-underline:hover:after {
