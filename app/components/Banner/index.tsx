@@ -5,22 +5,22 @@ import type { CSSProperties } from "react";
 /**
  * KNOBS for adjusting the PC effect.
  */
-const pcStyle: CSSProperties = {
+const pcStyle: CSSProperties & { [key: string]: string } = {
   "--pc-width": "520px",
 
   // Screen rectangle as percentages
-  "--screen-top": "6.80%",
-  "--screen-left": "7%",
-  "--screen-width": "86.4%",
-  "--screen-height": "74.5%",
+  "--screen-top": "6.80%",    // move screen up/down
+  "--screen-left": "7%",      // move screen left/right
+  "--screen-width": "86.4%",  // width of screen
+  "--screen-height": "74.5%", // height of screen
 
   // Rounded inner corners
   "--screen-radius": "10% / 10%",
 
   // Effect strengths
-  "--overlay-opacity": "0.7",
-  "--phosphor-opacity": "0.18",
-  "--rim-opacity": "0.6",
+  "--overlay-opacity": "0.7",    // glass + scanlines
+  "--phosphor-opacity": "0.18",  // RGB stripes
+  "--rim-opacity": "0.6",        // glow
 };
 
 const Banner = () => {
