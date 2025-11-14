@@ -1,18 +1,21 @@
-import Banner from './components/Banner/index';
-import Features from './components/Work/index';
-import Cook from './components/Cook/index';
-import Expert from './components/Expert/index';
-import Newsletter from './components/Newsletter/Newsletter';
+import Banner from "./components/Banner";
+import Features from "./components/Work";
+import Expert from "./components/Expert";
+import Newsletter from "./components/Newsletter/Newsletter";
 
 export default function Home() {
   return (
     <main>
+      {/* Banner section */}
       <Banner />
+
+      {/* Work / Features section */}
       <Features />
-      <div id="about-section">
-        <Cook />
-      </div>
+
+      {/* Optional Expert section (currently disabled) */}
       {/* <Expert /> */}
+
+      {/* Newsletter or contact footer section */}
       <Newsletter />
     </main>
   );

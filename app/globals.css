@@ -2,6 +2,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+:root{
+  --nav-h: 72px;              /* navbar height */
+  --brand-red: #AC1917;       /* wipe color */
+  --ink-2: #645F5A;           /* bottom border */
+  --nav-bg: #EAEAEA;          /* bar bg */
+}
+
 
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";

@@ -1,6 +1,5 @@
 import "./globals.css";
-import Navbar from "./components/Navbar/index";
-import Footer from "./components/Footer/Footer";
+import NavBar from "./components/Navbar"; // uses app/components/Navbar/index.tsx
 import { gontserrat } from "./fonts";
 
 export const metadata = {
@@ -14,11 +13,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="nl">
       <body className={gontserrat.className}>
-        {/* <Navbar /> */}
+        <NavBar />
         {children}
-        {/* <Footer /> */}
       </body>
     </html>
   );
