@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Fade } from "react-awesome-reveal";
+import EmailIcon from "@mui/icons-material/Email";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
 const ContactInfo = () => {
+  const email = "info@dogs4suc6.nl";
   const phoneDisplay = "+31 6 20002928";
   const phoneTel = "+31620002928";
   const whatsappNumber = "31620002928";
@@ -19,6 +21,44 @@ const ContactInfo = () => {
   const logoRef = useRef<HTMLImageElement | null>(null);
   const hasAnimated = useRef(false);
 
+  // ===== SIMPLE FORMSPREE STATE ======================================
+  const [formStatus, setFormStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    const endpoint =
+      form.action || "https://formspree.io/f/myzvzgbo";
+    const data = new FormData(form);
+
+    setFormStatus("submitting");
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+        body: data,
+      });
+
+      if (!res.ok) {
+        setFormStatus("error");
+        return;
+      }
+
+      setFormStatus("success");
+      form.reset();
+    } catch {
+      setFormStatus("error");
+    }
+  };
+
   const computeEndX = () => {
     const footerEl = footerRef.current;
     const padEl = padRef.current;
@@ -29,7 +69,7 @@ const ContactInfo = () => {
     const padLeft = parseFloat(getComputedStyle(padEl).paddingLeft || "0");
     const logoW = logoEl.getBoundingClientRect().width;
 
-    const EXTRA_RED = 10;
+    const EXTRA_RED = 10; // small extra so the red edge passes just beyond
     return footerW - padLeft - logoW - EXTRA_RED;
   };
 
@@ -52,7 +92,7 @@ const ContactInfo = () => {
     const easeOutExpo = (t: number) =>
       t === 1 ? 1 : 1 - Math.pow(2, -25 * t);
     const PIVOT = 0.9;
-    const POWER = 1.8;
+    const POWER = 1.4; // a bit snappier at the end
     const expoWithTail = (t: number) => {
       const base = easeOutExpo(t);
       if (t <= PIVOT) return base;
@@ -88,7 +128,7 @@ const ContactInfo = () => {
         }
         const t = Math.min(1, (now - startAt) / DURATION);
         const eased = expoWithTail(t);
-        const x = 0 + (endX - 0) * eased;
+        const x = 0 + (endX - 0) * eased; // 0 → endX (left → right)
         wipeEl.style.transform = `translate3d(${x}px,0,0)`;
 
         if (t < 1) {
@@ -182,70 +222,60 @@ const ContactInfo = () => {
                 "
                 style={{ color: "#645F5A" }}
               >
-Wanneer je het contactformulier invult, neem ik binnen een dag contact met je op. Bellen of WhatsAppen is eveneens mogelijk. Tijdens ons gesprek bekijken wij samen wat ik voor je kan realiseren, waarna ik een totaalprijs opmaak voor het volledige project.
+                Vul het contactformulier in en ik neem binnen een dag contact
+                met je op, je kan me ook direct bellen, of berichten via
+                WhatsApp. Vervolgens kunnen we bespreken wat ik voor je kan doen
+                en op basis daarvan stel ik een prijs voor het gehele project.
               </p>
 
-              {/* SIMPLE CONTACT FORM (Formspree) */}
+              {/* FORM */}
               <form
-                className="mt-8 space-y-4"
-                action="https://formspree.io/f/myzvzgbo"
+                onSubmit={handleSubmit}
+                // keep your existing Formspree endpoint here:
+                action="https://formspree.io/f/YOUR_FORMSPREE_ID_HERE"
                 method="POST"
+                className="mt-8 space-y-4"
               >
-                {/* Hidden field so you see it came from Designs4suc6 */}
-                <input
-                  type="hidden"
-                  name="form_origin"
-                  value="Designs4suc6.nl contactformulier"
-                />
-
                 <div>
                   <label
                     htmlFor="naam"
-                    className="block text-[0.95rem] md:text-[1.0rem] font-medium mb-1"
+                    className="block text-[0.95rem] md:text-[1rem] font-medium"
                     style={{ color: "#645F5A" }}
                   >
-                    Naam *
+                    Naam*
                   </label>
                   <input
                     id="naam"
                     name="naam"
                     type="text"
                     required
-                    className="w-full rounded-[10px] border-[2px] px-3 py-2 text-[0.95rem]"
-                    style={{
-                      backgroundColor: "#EAEAEA",
-                      borderColor: "#BCC0C2",
-                      color: "#645F5A",
-                    }}
+                    className="mt-1 w-full rounded-[10px] border-[2px] px-3 py-2 text-[0.95rem] md:text-[1rem] bg-[#EAEAEA] focus:outline-none focus:border-[#C3373D]"
+                    style={{ borderColor: "#BCC0C2", color: "#645F5A" }}
                   />
                 </div>
 
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-[0.95rem] md:text-[1.0rem] font-medium mb-1"
+                    className="block text-[0.95rem] md:text-[1rem] font-medium"
                     style={{ color: "#645F5A" }}
                   >
-                    E-mail *
+                    E-mail*
                   </label>
                   <input
                     id="email"
                     name="email"
                     type="email"
                     required
-                    className="w-full rounded-[10px] border-[2px] px-3 py-2 text-[0.95rem]"
-                    style={{
-                      backgroundColor: "#EAEAEA",
-                      borderColor: "#BCC0C2",
-                      color: "#645F5A",
-                    }}
+                    className="mt-1 w-full rounded-[10px] border-[2px] px-3 py-2 text-[0.95rem] md:text-[1rem] bg-[#EAEAEA] focus:outline-none focus:border-[#C3373D]"
+                    style={{ borderColor: "#BCC0C2", color: "#645F5A" }}
                   />
                 </div>
 
                 <div>
                   <label
                     htmlFor="website"
-                    className="block text-[0.95rem] md:text-[1.0rem] font-medium mb-1"
+                    className="block text-[0.95rem] md:text-[1rem] font-medium"
                     style={{ color: "#645F5A" }}
                   >
                     Huidige website indien aanwezig
@@ -254,24 +284,45 @@ Wanneer je het contactformulier invult, neem ik binnen een dag contact met je op
                     id="website"
                     name="website"
                     type="text"
-                    placeholder="https://..."
-                    className="w-full rounded-[10px] border-[2px] px-3 py-2 text-[0.95rem]"
-                    style={{
-                      backgroundColor: "#EAEAEA",
-                      borderColor: "#BCC0C2",
-                      color: "#645F5A",
-                    }}
+                    placeholder="https://voorbeeld.nl"
+                    className="mt-1 w-full rounded-[10px] border-[2px] px-3 py-2 text-[0.95rem] md:text-[1rem] bg-[#EAEAEA] focus:outline-none focus:border-[#C3373D]"
+                    style={{ borderColor: "#BCC0C2", color: "#645F5A" }}
                   />
                 </div>
+
+                {/* STATUS MESSAGE */}
+                {formStatus === "success" && (
+                  <p
+                    className="mt-2 rounded-[8px] px-3 py-2 text-[0.9rem]"
+                    style={{
+                      backgroundColor: "#D1FAE5",
+                      color: "#065F46",
+                      border: "1px solid #6EE7B7",
+                    }}
+                  >
+                    Bedankt voor je bericht! Ik neem binnen een dag contact met
+                    je op.
+                  </p>
+                )}
+                {formStatus === "error" && (
+                  <p
+                    className="mt-2 rounded-[8px] px-3 py-2 text-[0.9rem]"
+                    style={{
+                      backgroundColor: "#FEE2E2",
+                      color: "#991B1B",
+                      border: "1px solid #FCA5A5",
+                    }}
+                  >
+                    Er ging iets mis bij het verzenden. Probeer het later
+                    opnieuw of stuur een e-mail naar {email}.
+                  </p>
+                )}
 
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="
-                      w-full rounded-[10px] border-[3px]
-                      text-center text-[0.95rem] md:text-[1.05rem] font-medium
-                      py-[10px] px-0 transition duration-300
-                    "
+                    disabled={formStatus === "submitting"}
+                    className="w-full rounded-[10px] border-[3px] text-center text-[1rem] font-medium py-[10px] px-0 transition duration-300 disabled:opacity-70"
                     style={{
                       backgroundColor: "#E5E5E5",
                       color: "#645F5A",
@@ -279,6 +330,7 @@ Wanneer je het contactformulier invult, neem ik binnen een dag contact met je op
                     }}
                     onMouseEnter={(e) => {
                       const t = e.currentTarget;
+                      if (t.disabled) return;
                       t.style.backgroundColor = "#FDD194";
                       t.style.color = "#AC1917";
                       t.style.borderColor = "#AC1917";
@@ -290,54 +342,56 @@ Wanneer je het contactformulier invult, neem ik binnen een dag contact met je op
                       t.style.borderColor = "#BCC0C2";
                     }}
                   >
-                    Verstuur
+                    {formStatus === "submitting"
+                      ? "Versturen..."
+                      : "Verstuur bericht"}
                   </button>
                 </div>
               </form>
 
-{/* PHONE + WHATSAPP BELOW FORM */}
-<div
-  className="
-    mt-8
-    flex flex-col items-center gap-4
-    lg:flex-row lg:justify-center lg:items-center lg:gap-10
-  "
->
-  {/* PHONE */}
-  <a
-    href={`tel:${phoneTel}`}
-    className="
-      group flex items-center gap-3
-      text-[1rem] md:text-[1.1rem] text-[#645F5A]
-      transition-colors duration-200 hover:text-[#AC1917]
-    "
-  >
-    <LocalPhoneIcon
-      fontSize="medium"
-      className="transition-colors duration-200"
-    />
-    <span>{phoneDisplay}</span>
-  </a>
+              {/* DIRECT CONTACT OPTIONS */}
+              <div className="mt-8">
+                <p
+                  className="mb-4 text-center text-[0.9rem] md:text-[1rem]"
+                  style={{ color: "#645F5A" }}
+                >
+                  Of neem direct contact op:
+                </p>
 
-  {/* WHATSAPP */}
-  <a
-    href={`https://wa.me/${whatsappNumber}`}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="
-      group flex items-center gap-3
-      text-[1rem] md:text-[1.1rem] text-[#645F5A]
-      transition-colors duration-200 hover:text-[#AC1917]
-    "
-  >
-    <WhatsAppIcon
-      fontSize="medium"
-      className="transition-colors duration-200"
-    />
-    <span>WhatsApp</span>
-  </a>
-</div>
+                <div
+                  className="
+                    flex flex-col items-center gap-3
+                    md:flex-col
+                    lg:flex-row lg:justify-center lg:gap-8
+                  "
+                >
+                  {/* PHONE */}
+                  <a
+                    href={`tel:${phoneTel}`}
+                    className="group flex items-center gap-3 text-[1rem] md:text-[1.05rem] text-[#645F5A] transition-colors duration-200 hover:text-[#AC1917]"
+                  >
+                    <LocalPhoneIcon
+                      fontSize="medium"
+                      className="transition-colors duration-200"
+                    />
+                    <span>{phoneDisplay}</span>
+                  </a>
 
+                  {/* WHATSAPP */}
+                  <a
+                    href={`https://wa.me/${whatsappNumber}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-3 text-[1rem] md:text-[1.05rem] text-[#645F5A] transition-colors duration-200 hover:text-[#AC1917]"
+                  >
+                    <WhatsAppIcon
+                      fontSize="medium"
+                      className="transition-colors duration-200"
+                    />
+                    <span>WhatsApp</span>
+                  </a>
+                </div>
+              </div>
             </div>
 
             {/* RIGHT GREY LOGO — desktop only */}
