@@ -232,7 +232,7 @@ const ContactInfo = () => {
               <form
                 onSubmit={handleSubmit}
                 // keep your existing Formspree endpoint here:
-                action="https://formspree.io/f/YOUR_FORMSPREE_ID_HERE"
+                action="https://formspree.io/f/myzvzgbo"
                 method="POST"
                 className="mt-8 space-y-4"
               >
