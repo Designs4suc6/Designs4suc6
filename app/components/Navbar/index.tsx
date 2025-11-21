@@ -1,27 +1,40 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 export default function Navbar() {
   const headerRef = useRef<HTMLElement | null>(null);
-  const wipeRef   = useRef<HTMLDivElement | null>(null);
-  const padRef    = useRef<HTMLDivElement | null>(null);
-  const logoRef   = useRef<HTMLImageElement | null>(null);
+  const wipeRef = useRef<HTMLDivElement | null>(null);
+  const padRef = useRef<HTMLDivElement | null>(null);
+  const logoRef = useRef<HTMLImageElement | null>(null);
   const hasAnimated = useRef(false);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // =========================================
+  // SMOOTH SCROLL HANDLER (fixes reload issue)
+  // =========================================
+  const handleNavClick =
+    (targetId: string) =>
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      setIsMenuOpen(false);
+    };
+
   // ===== DESKTOP WIPE ANIMATION ======================================
   const computeEndX = () => {
     const headerEl = headerRef.current;
-    const padEl    = padRef.current;
-    const logoEl   = logoRef.current;
+    const padEl = padRef.current;
+    const logoEl = logoRef.current;
     if (!headerEl || !padEl || !logoEl) return 0;
 
-    const headerW  = headerEl.getBoundingClientRect().width;
+    const headerW = headerEl.getBoundingClientRect().width;
     const padRight = parseFloat(getComputedStyle(padEl).paddingRight || "0");
-    const logoW    = logoEl.getBoundingClientRect().width;
+    const logoW = logoEl.getBoundingClientRect().width;
 
     const EXTRA_RED = 10;
     return -(headerW - padRight - logoW - EXTRA_RED);
@@ -39,11 +52,10 @@ export default function Navbar() {
     }
 
     const DURATION = 13500;
-    const DELAY    = 425;
+    const DELAY = 425;
 
-    function easeOutExpo(t: number) {
-      return t === 1 ? 1 : 1 - Math.pow(2, -25 * t);
-    }
+    const easeOutExpo = (t: number) =>
+      t === 1 ? 1 : 1 - Math.pow(2, -25 * t);
 
     el.style.transform = "translate3d(0px,0,0)";
     el.style.willChange = "transform";
@@ -90,18 +102,12 @@ export default function Navbar() {
 
   useEffect(() => {
     if (typeof document === "undefined") return;
-    const body = document.body;
-    if (isMenuOpen) {
-      body.style.overflow = "hidden";
-    } else {
-      body.style.overflow = "";
-    }
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
     return () => {
-      body.style.overflow = "";
+      document.body.style.overflow = "";
     };
   }, [isMenuOpen]);
 
-  // close menu when resizing up to md+
   useEffect(() => {
     const handler = () => {
       if (window.innerWidth >= 768) {
@@ -112,7 +118,6 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", handler);
   }, []);
 
-  // close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsMenuOpen(false);
@@ -121,17 +126,15 @@ export default function Navbar() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const toggleMenu = () => setIsMenuOpen(v => !v);
-  const closeMenu  = () => setIsMenuOpen(false);
-
+  const toggleMenu = () => setIsMenuOpen((v) => !v);
   const linkClasses =
     "px-4 py-2 rounded-full border border-[#BCC0C2] bg-[#E5E5E5] text-[#645F5A] hover:bg-[#FDD194] hover:text-[#AC1917] hover:border-[#AC1917] transition";
 
   return (
     <>
       <header
-  ref={headerRef}
-  className="sticky top-0 z-[10000] w-full bg-[#EAEAEA] border-b-[3px] border-[#645F5A]"
+        ref={headerRef}
+        className="sticky top-0 z-[10000] w-full bg-[#EAEAEA] border-b-[3px] border-[#645F5A]"
         role="banner"
         aria-label="Site navigation"
       >
@@ -156,25 +159,37 @@ export default function Navbar() {
         <div className="relative z-0">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="h-16 flex items-center">
-              {/* LEFT SPACER (tablet+ real spacer, mobile fake spacer) */}
+              {/* LEFT SPACER */}
               <div className="w-[56px] flex items-center">
                 <div className="hidden md:block w-full" />
                 <div className="block md:hidden w-full" aria-hidden="true" />
               </div>
 
-              {/* CENTER: desktop/tablet nav OR mobile hamburger */}
+              {/* CENTER */}
               <div className="flex-1 flex items-center justify-center">
                 {/* Desktop / tablet nav */}
                 <nav className="hidden md:flex justify-center gap-6 lg:gap-10">
-                  <Link href="#home-section" className={linkClasses}>
+                  <a
+                    href="#home-section"
+                    onClick={handleNavClick("home-section")}
+                    className={linkClasses}
+                  >
                     Wat ik doe
-                  </Link>
-                  <Link href="#portfolio-section" className={linkClasses}>
+                  </a>
+                  <a
+                    href="#portfolio-section"
+                    onClick={handleNavClick("portfolio-section")}
+                    className={linkClasses}
+                  >
                     Portfolio
-                  </Link>
-                  <Link href="#contact-section" className={linkClasses}>
+                  </a>
+                  <a
+                    href="#contact-section"
+                    onClick={handleNavClick("contact-section")}
+                    className={linkClasses}
+                  >
                     Contact
-                  </Link>
+                  </a>
                 </nav>
 
                 {/* Mobile hamburger */}
@@ -194,7 +209,7 @@ export default function Navbar() {
                 </div>
               </div>
 
-              {/* RIGHT GREY LOGO — ALWAYS VISIBLE */}
+              {/* RIGHT GREY LOGO */}
               <div className="w-[56px] flex items-center justify-end">
                 <img
                   src="/images/Designs4suc6_logo_grey.webp"
@@ -209,16 +224,13 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* MOBILE OVERLAY MENU (BELOW NAVBAR) */}
+      {/* MOBILE OVERLAY MENU */}
       <div
-className={`
-  fixed left-0 right-0 bottom-0 top-[calc(4rem+3px)] bg-[#E5E5E5]
-    flex flex-col items-center justify-center
-    transition-opacity duration-300
-    z-50
-    ${isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
-  `}
-
+        className={`fixed left-0 right-0 bottom-0 top-[calc(4rem+3px)] bg-[#E5E5E5]
+          flex flex-col items-center justify-center
+          transition-opacity duration-300
+          z-50
+          ${isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
         aria-hidden={isMenuOpen ? "false" : "true"}
       >
         <ul className="list-none space-y-8 text-center">
@@ -226,7 +238,7 @@ className={`
             <a
               href="#home-section"
               className="menu-item text-2xl font-semibold text-[#645F5A]"
-              onClick={closeMenu}
+              onClick={handleNavClick("home-section")}
             >
               Wat ik doe
             </a>
@@ -235,7 +247,7 @@ className={`
             <a
               href="#portfolio-section"
               className="menu-item text-2xl font-semibold text-[#645F5A]"
-              onClick={closeMenu}
+              onClick={handleNavClick("portfolio-section")}
             >
               Portfolio
             </a>
@@ -244,7 +256,7 @@ className={`
             <a
               href="#contact-section"
               className="menu-item text-2xl font-semibold text-[#645F5A]"
-              onClick={closeMenu}
+              onClick={handleNavClick("contact-section")}
             >
               Contact
             </a>
@@ -252,7 +264,7 @@ className={`
         </ul>
       </div>
 
-      {/* HAMBURGER STYLES */}
+      {/* STYLES */}
       <style jsx global>{`
         .menu-toggle {
           --btn-size: 36px;
@@ -288,12 +300,9 @@ className={`
         .menu-toggle .bar:nth-child(4) {
           top: calc(100% - 8px - 3px);
         }
-
         .menu-toggle:hover .bar {
           background-color: #b60b13;
         }
-
-        /* X state */
         .menu-toggle .bar.open:nth-child(1),
         .menu-toggle .bar.open:nth-child(4) {
           opacity: 0;
