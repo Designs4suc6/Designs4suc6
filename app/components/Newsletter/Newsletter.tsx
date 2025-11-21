@@ -188,7 +188,7 @@ Wanneer je het contactformulier invult, neem ik binnen een dag contact met je op
               {/* SIMPLE CONTACT FORM (Formspree) */}
               <form
                 className="mt-8 space-y-4"
-                action="https://formspree.io/f/mpwlznaz"
+                action="https://formspree.io/f/myzvzgbo"
                 method="POST"
               >
                 {/* Hidden field so you see it came from Designs4suc6 */}
