@@ -2,12 +2,10 @@
 
 import { useEffect, useRef } from "react";
 import { Fade } from "react-awesome-reveal";
-import EmailIcon from "@mui/icons-material/Email";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
 const ContactInfo = () => {
-  const email = "info@dogs4suc6.nl";
   const phoneDisplay = "+31 6 20002928";
   const phoneTel = "+31620002928";
   const whatsappNumber = "31620002928";
@@ -31,7 +29,7 @@ const ContactInfo = () => {
     const padLeft = parseFloat(getComputedStyle(padEl).paddingLeft || "0");
     const logoW = logoEl.getBoundingClientRect().width;
 
-    const EXTRA_RED = 10; // small extra so the red edge passes just beyond
+    const EXTRA_RED = 10;
     return footerW - padLeft - logoW - EXTRA_RED;
   };
 
@@ -53,18 +51,14 @@ const ContactInfo = () => {
 
     const easeOutExpo = (t: number) =>
       t === 1 ? 1 : 1 - Math.pow(2, -25 * t);
-
-    // Slightly different parameters from the hero:
-    // the tail accelerates instead of lingering.
-    const PIVOT = 0.8;
-    const POWER = 0.6; // < 1 makes the end segment faster
-
-    const expoWithQuickerTail = (t: number) => {
+    const PIVOT = 0.9;
+    const POWER = 1.8;
+    const expoWithTail = (t: number) => {
       const base = easeOutExpo(t);
       if (t <= PIVOT) return base;
       const u = (t - PIVOT) / (1 - PIVOT);
-      const boosted = Math.pow(base, POWER); // boosts values near 1
-      return base * (1 - u) + boosted * u;
+      const slowed = Math.pow(base, POWER);
+      return base * (1 - u) + slowed * u;
     };
 
     const runAnimation = () => {
@@ -93,8 +87,8 @@ const ContactInfo = () => {
           return;
         }
         const t = Math.min(1, (now - startAt) / DURATION);
-        const eased = expoWithQuickerTail(t);
-        const x = 0 + (endX - 0) * eased; // 0 → endX (left → right)
+        const eased = expoWithTail(t);
+        const x = 0 + (endX - 0) * eased;
         wipeEl.style.transform = `translate3d(${x}px,0,0)`;
 
         if (t < 1) {
@@ -188,63 +182,162 @@ const ContactInfo = () => {
                 "
                 style={{ color: "#645F5A" }}
               >
-                Stuur me een berichtje en ik neem binnen een dag contact met je op.
-                Dan kunnen we bespreken wat ik voor je kan doen en op basis
-                daarvan stel ik een prijs voor het gehele project.
+Wanneer je het contactformulier invult, neem ik binnen een dag contact met je op. Bellen of WhatsAppen is eveneens mogelijk. Tijdens ons gesprek bekijken wij samen wat ik voor je kan realiseren, waarna ik een totaalprijs opmaak voor het volledige project.
               </p>
 
-              {/* CONTACT METHODS */}
-              <div className="mt-8 flex flex-col items-center space-y-4">
-                {/* EMAIL */}
-                <a
-                  href={`mailto:${email}`}
-                  className="
-                    group flex items-center justify-center gap-3
-                    text-[1rem] md:text-[1.1rem] text-[#645F5A]
-                    transition-colors duration-200 hover:text-[#AC1917]
-                  "
-                >
-                  <EmailIcon
-                    fontSize="medium"
-                    className="transition-colors duration-200"
-                  />
-                  <span>{email}</span>
-                </a>
+              {/* SIMPLE CONTACT FORM (Formspree) */}
+              <form
+                className="mt-8 space-y-4"
+                action="https://formspree.io/f/mpwlznaz"
+                method="POST"
+              >
+                {/* Hidden field so you see it came from Designs4suc6 */}
+                <input
+                  type="hidden"
+                  name="form_origin"
+                  value="Designs4suc6.nl contactformulier"
+                />
 
-                {/* PHONE */}
-                <a
-                  href={`tel:${phoneTel}`}
-                  className="
-                    group flex items-center justify-center gap-3
-                    text-[1rem] md:text-[1.1rem] text-[#645F5A]
-                    transition-colors duration-200 hover:text-[#AC1917]
-                  "
-                >
-                  <LocalPhoneIcon
-                    fontSize="medium"
-                    className="transition-colors duration-200"
+                <div>
+                  <label
+                    htmlFor="naam"
+                    className="block text-[0.95rem] md:text-[1.0rem] font-medium mb-1"
+                    style={{ color: "#645F5A" }}
+                  >
+                    Naam *
+                  </label>
+                  <input
+                    id="naam"
+                    name="naam"
+                    type="text"
+                    required
+                    className="w-full rounded-[10px] border-[2px] px-3 py-2 text-[0.95rem]"
+                    style={{
+                      backgroundColor: "#EAEAEA",
+                      borderColor: "#BCC0C2",
+                      color: "#645F5A",
+                    }}
                   />
-                  <span>{phoneDisplay}</span>
-                </a>
+                </div>
 
-                {/* WHATSAPP */}
-                <a
-                  href={`https://wa.me/${whatsappNumber}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="
-                    group flex items-center justify-center gap-3
-                    text-[1rem] md:text-[1.1rem] text-[#645F5A]
-                    transition-colors duration-200 hover:text-[#AC1917]
-                  "
-                >
-                  <WhatsAppIcon
-                    fontSize="medium"
-                    className="transition-colors duration-200"
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-[0.95rem] md:text-[1.0rem] font-medium mb-1"
+                    style={{ color: "#645F5A" }}
+                  >
+                    E-mail *
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    className="w-full rounded-[10px] border-[2px] px-3 py-2 text-[0.95rem]"
+                    style={{
+                      backgroundColor: "#EAEAEA",
+                      borderColor: "#BCC0C2",
+                      color: "#645F5A",
+                    }}
                   />
-                  <span>WhatsApp</span>
-                </a>
-              </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="website"
+                    className="block text-[0.95rem] md:text-[1.0rem] font-medium mb-1"
+                    style={{ color: "#645F5A" }}
+                  >
+                    Huidige website indien aanwezig
+                  </label>
+                  <input
+                    id="website"
+                    name="website"
+                    type="text"
+                    placeholder="https://..."
+                    className="w-full rounded-[10px] border-[2px] px-3 py-2 text-[0.95rem]"
+                    style={{
+                      backgroundColor: "#EAEAEA",
+                      borderColor: "#BCC0C2",
+                      color: "#645F5A",
+                    }}
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    className="
+                      w-full rounded-[10px] border-[3px]
+                      text-center text-[0.95rem] md:text-[1.05rem] font-medium
+                      py-[10px] px-0 transition duration-300
+                    "
+                    style={{
+                      backgroundColor: "#E5E5E5",
+                      color: "#645F5A",
+                      borderColor: "#BCC0C2",
+                    }}
+                    onMouseEnter={(e) => {
+                      const t = e.currentTarget;
+                      t.style.backgroundColor = "#FDD194";
+                      t.style.color = "#AC1917";
+                      t.style.borderColor = "#AC1917";
+                    }}
+                    onMouseLeave={(e) => {
+                      const t = e.currentTarget;
+                      t.style.backgroundColor = "#E5E5E5";
+                      t.style.color = "#645F5A";
+                      t.style.borderColor = "#BCC0C2";
+                    }}
+                  >
+                    Verstuur
+                  </button>
+                </div>
+              </form>
+
+{/* PHONE + WHATSAPP BELOW FORM */}
+<div
+  className="
+    mt-8
+    flex flex-col items-center gap-4
+    lg:flex-row lg:justify-center lg:items-center lg:gap-10
+  "
+>
+  {/* PHONE */}
+  <a
+    href={`tel:${phoneTel}`}
+    className="
+      group flex items-center gap-3
+      text-[1rem] md:text-[1.1rem] text-[#645F5A]
+      transition-colors duration-200 hover:text-[#AC1917]
+    "
+  >
+    <LocalPhoneIcon
+      fontSize="medium"
+      className="transition-colors duration-200"
+    />
+    <span>{phoneDisplay}</span>
+  </a>
+
+  {/* WHATSAPP */}
+  <a
+    href={`https://wa.me/${whatsappNumber}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="
+      group flex items-center gap-3
+      text-[1rem] md:text-[1.1rem] text-[#645F5A]
+      transition-colors duration-200 hover:text-[#AC1917]
+    "
+  >
+    <WhatsAppIcon
+      fontSize="medium"
+      className="transition-colors duration-200"
+    />
+    <span>WhatsApp</span>
+  </a>
+</div>
+
             </div>
 
             {/* RIGHT GREY LOGO — desktop only */}
@@ -286,7 +379,7 @@ const ContactInfo = () => {
           </div>
         </div>
 
-        {/* Content layer below the wipe */}
+        {/* Content layer above the wipe */}
         <div className="relative z-[5]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="h-16 flex items-center">
