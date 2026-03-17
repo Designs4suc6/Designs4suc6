@@ -32,8 +32,7 @@ const ContactInfo = () => {
     e.preventDefault();
 
     const form = e.currentTarget;
-    const endpoint =
-      form.action || "https://formspree.io/f/myzvzgbo";
+    const endpoint = form.action || "https://formspree.io/f/myzvzgbo";
     const data = new FormData(form);
 
     setFormStatus("submitting");
@@ -69,7 +68,7 @@ const ContactInfo = () => {
     const padLeft = parseFloat(getComputedStyle(padEl).paddingLeft || "0");
     const logoW = logoEl.getBoundingClientRect().width;
 
-    const EXTRA_RED = 10; // small extra so the red edge passes just beyond
+    const EXTRA_RED = 10;
     return footerW - padLeft - logoW - EXTRA_RED;
   };
 
@@ -86,20 +85,12 @@ const ContactInfo = () => {
     let raf = 0;
     let cleanupResize: (() => void) | null = null;
 
-    const DURATION = 13500;
     const DELAY = 425;
+    const PIXELS_PER_SECOND = 780;
+    const MIN_DURATION = 1200;
+    const MAX_DURATION = 2200;
 
-    const easeOutExpo = (t: number) =>
-      t === 1 ? 1 : 1 - Math.pow(2, -25 * t);
-    const PIVOT = 0.9;
-    const POWER = 1.4; // a bit snappier at the end
-    const expoWithTail = (t: number) => {
-      const base = easeOutExpo(t);
-      if (t <= PIVOT) return base;
-      const u = (t - PIVOT) / (1 - PIVOT);
-      const slowed = Math.pow(base, POWER);
-      return base * (1 - u) + slowed * u;
-    };
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
     const runAnimation = () => {
       if (hasAnimated.current) return;
@@ -126,9 +117,17 @@ const ContactInfo = () => {
           raf = requestAnimationFrame(step);
           return;
         }
-        const t = Math.min(1, (now - startAt) / DURATION);
-        const eased = expoWithTail(t);
-        const x = 0 + (endX - 0) * eased; // 0 → endX (left → right)
+
+        const distance = Math.abs(endX);
+        const duration = Math.max(
+          MIN_DURATION,
+          Math.min(MAX_DURATION, (distance / PIXELS_PER_SECOND) * 1000)
+        );
+
+        const t = Math.min(1, (now - startAt) / duration);
+        const progress = easeOutCubic(t);
+        const x = endX * progress;
+
         wipeEl.style.transform = `translate3d(${x}px,0,0)`;
 
         if (t < 1) {
@@ -231,7 +230,6 @@ const ContactInfo = () => {
               {/* FORM */}
               <form
                 onSubmit={handleSubmit}
-                // keep your existing Formspree endpoint here:
                 action="https://formspree.io/f/myzvzgbo"
                 method="POST"
                 className="mt-8 space-y-4"

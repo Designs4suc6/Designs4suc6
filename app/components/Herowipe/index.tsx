@@ -24,36 +24,36 @@ export default function HeroWipe({
       return;
     }
 
-    // smooth expo with gentle tail
-    const DURATION = 13500;
     const DELAY = 425;
+    const DURATION = 1800;
     const startAt = performance.now() + DELAY;
 
-    const easeOutExpo = (t: number) =>
-      t === 1 ? 1 : 1 - Math.pow(2, -25 * t);
-    const PIVOT = 0.9;
-    const POWER = 1.8;
-    const expoWithTail = (t: number) => {
-      const base = easeOutExpo(t);
-      if (t <= PIVOT) return base;
-      const u = (t - PIVOT) / (1 - PIVOT);
-      const slowed = Math.pow(base, POWER);
-      return base * (1 - u) + slowed * u;
-    };
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    let raf = 0;
 
     const step = (now: number) => {
       if (now < startAt) {
-        requestAnimationFrame(step);
+        raf = requestAnimationFrame(step);
         return;
       }
+
       const t = Math.min(1, (now - startAt) / DURATION);
-      const eased = expoWithTail(t);
-      const x = 0 + (-110 - 0) * eased; // 0% → -110%
+      const progress = easeOutCubic(t);
+      const x = -110 * progress; // 0% → -110%
+
       el.style.transform = `translate3d(${x}%,0,0)`;
-      if (t < 1) requestAnimationFrame(step);
+
+      if (t < 1) {
+        raf = requestAnimationFrame(step);
+      } else {
+        el.style.transform = "translate3d(-110%,0,0)";
+      }
     };
 
-    requestAnimationFrame(step);
+    raf = requestAnimationFrame(step);
+
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   return (
@@ -87,7 +87,6 @@ export default function HeroWipe({
         style={{ background: "#AC1917", transform: "translateX(0%)" }}
       >
         <div className="grid h-full place-items-center pr-6">
-          {/* Your big SVG goes here; placeholder rectangle: */}
           {svg ?? (
             <svg width="120" height="120">
               <rect width="120" height="120" fill="#ECD4A4" />

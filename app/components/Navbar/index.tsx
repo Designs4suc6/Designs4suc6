@@ -51,11 +51,12 @@ export default function Navbar() {
       return;
     }
 
-    const DURATION = 13500;
     const DELAY = 425;
+    const PIXELS_PER_SECOND = 780;
+    const MIN_DURATION = 1200;
+    const MAX_DURATION = 2200;
 
-    const easeOutExpo = (t: number) =>
-      t === 1 ? 1 : 1 - Math.pow(2, -25 * t);
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
     el.style.transform = "translate3d(0px,0,0)";
     el.style.willChange = "transform";
@@ -77,9 +78,17 @@ export default function Navbar() {
         raf = requestAnimationFrame(step);
         return;
       }
-      const t = Math.min(1, (now - startAt) / DURATION);
-      const eased = easeOutExpo(t);
-      const x = 0 + (endX - 0) * eased;
+
+      const distance = Math.abs(endX);
+      const duration = Math.max(
+        MIN_DURATION,
+        Math.min(MAX_DURATION, (distance / PIXELS_PER_SECOND) * 1000)
+      );
+
+      const t = Math.min(1, (now - startAt) / duration);
+      const progress = easeOutCubic(t);
+
+      const x = endX * progress;
       el.style.transform = `translate3d(${x}px,0,0)`;
 
       if (t < 1) {
